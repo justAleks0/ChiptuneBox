@@ -2,188 +2,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChiptuneBox v1.0.0 - Retro Pixel MP3 Player</title>
-    <meta name="description" content="A retro pixel-art MP3 player built for mobile. DS-inspired dual-screen layout with touch controls and nostalgic aesthetics.">
-    <meta name="author" content="justAleks">
-    <meta name="version" content="1.0.0">
-    <meta name="theme-color" content="#00ff88">
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Pixel DS MP3 Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .container {
+            background: transparent;
+            backdrop-filter: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+            border: none;
+            max-width: 100%;
+            width: 100vw;
+            height: 100vh;
+            animation: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            display: none;
+        }
+
+        .description {
+            display: none;
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            border-radius: 0;
+            overflow: hidden;
+            box-shadow: none;
+            border: none;
+            background: #000;
+            transition: none;
+        }
+
+        .iframe-container:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.2rem;
+            z-index: 1;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .credits {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0;
+                margin: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="ds-container">
-        <!-- Top Screen -->
-        <div class="ds-screen ds-top-screen">
-            <div class="screen-bezel">
-                <div class="screen-content top-content">
-                    <div class="status-bar">
-                        <span class="time">12:34</span>
-                        <span class="battery">🔋</span>
-                    </div>
-                    <div class="visualizer-area">
-                        <div class="album-art">
-                            <div class="pixel-mascot" id="mascot"></div>
-                        </div>
-                        <div class="visualizer" id="visualizer">
-                            <div class="eq-bar"></div>
-                            <div class="eq-bar"></div>
-                            <div class="eq-bar"></div>
-                            <div class="eq-bar"></div>
-                            <div class="eq-bar"></div>
-                        </div>
-                    </div>
-                    <div class="track-info">
-                        <div class="track-title" id="trackTitle">No Track Selected</div>
-                        <div class="track-artist" id="trackArtist">Unknown Artist</div>
-                    </div>
-                </div>
+    <div class="container">
+        <h1>🎵 Pixel DS MP3 Player</h1>
+        <p class="description">
+            Experience retro gaming vibes with this pixel-perfect DS-style music player. 
+            Relive the nostalgia of handheld gaming while enjoying your favorite tunes!
+        </p>
+        
+        <div class="iframe-container">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                Loading player...
             </div>
+            <iframe 
+                src="https://pixel-ds-mp3-player--breitan.on.websim.com/"
+                title="Pixel DS MP3 Player"
+                onload="hideLoading()"
+                loading="lazy">
+            </iframe>
         </div>
 
-        <!-- DS Hinge -->
-        <div class="ds-hinge"></div>
-
-        <!-- Bottom Screen -->
-        <div class="ds-screen ds-bottom-screen">
-            <div class="screen-bezel">
-                <div class="screen-content bottom-content">
-                    <div class="progress-section">
-                        <div class="time-display">
-                            <span id="currentTime">0:00</span>
-                            <span id="totalTime">0:00</span>
-                        </div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar" id="progressBar">
-                                <div class="progress-fill" id="progressFill"></div>
-                                <div class="progress-handle" id="progressHandle"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="controls-section">
-                        <button class="ds-button control-btn" id="shuffleBtn">🔀</button>
-                        <button class="ds-button control-btn" id="prevBtn">⏮️</button>
-                        <button class="ds-button control-btn play-pause" id="playBtn">▶️</button>
-                        <button class="ds-button control-btn" id="nextBtn">⏭️</button>
-                        <button class="ds-button control-btn" id="loopBtn">🔄</button>
-                    </div>
-
-                    <div class="volume-section">
-                        <span class="volume-label">VOL</span>
-                        <div class="volume-bar" id="volumeBar">
-                            <div class="volume-fill" id="volumeFill"></div>
-                            <div class="volume-handle" id="volumeHandle"></div>
-                        </div>
-                    </div>
-
-                    <div class="menu-buttons">
-                        <button class="ds-button menu-btn" id="libraryBtn">📁 LIBRARY</button>
-                        <button class="ds-button menu-btn" id="playlistBtn">📋 PLAYLIST</button>
-                        <button class="ds-button menu-btn" id="settingsBtn">⚙️ SETTINGS</button>
-                    </div>
-                </div>
-            </div>
+        <div class="credits">
+            Original player by <a href="https://pixel-ds-mp3-player--breitan.on.websim.com/" target="_blank">breitan</a>
         </div>
-
-        <!-- File Input (Hidden) -->
-        <input type="file" id="fileInput" multiple accept="audio/*" style="display: none;">
-        <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
-
-        <!-- Audio Element -->
-        <audio id="audioPlayer" preload="none"></audio>
-
-        <!-- Playlist Modal -->
-        <div class="playlist-modal" id="playlistModal">
-            <div class="playlist-content">
-                <div class="playlist-header">
-                    <h3>📋 PLAYLIST</h3>
-                    <button class="close-btn" id="closePlaylist">✕</button>
-                </div>
-                <div class="playlist-body" id="playlistBody">
-                    <div class="empty-playlist">
-                        <p>No tracks loaded</p>
-                        <p>Click LIBRARY to add music</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Settings Modal -->
-        <div class="settings-modal" id="settingsModal">
-            <div class="settings-content">
-                <div class="settings-header">
-                    <h3>⚙️ SETTINGS</h3>
-                    <button class="close-btn" id="closeSettings">✕</button>
-                </div>
-                
-                <div class="settings-body">
-                    <div class="setting-group">
-                        <label>Theme</label>
-                        <select id="themeSelect" class="setting-select">
-                            <option value="default">Classic DS</option>
-                            <option value="lite">DS Lite</option>
-                            <option value="dark">Dark Mode</option>
-                            <option value="retro">Retro Green</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Audio Quality</label>
-                        <select id="audioQuality" class="setting-select">
-                            <option value="high">High</option>
-                            <option value="medium">Medium</option>
-                            <option value="low">Low (Battery Save)</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Auto-Play Next</label>
-                        <input type="checkbox" id="autoPlayNext" class="setting-checkbox" checked>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Button Sounds</label>
-                        <input type="checkbox" id="buttonSounds" class="setting-checkbox" checked>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Show Visualizer</label>
-                        <input type="checkbox" id="showVisualizer" class="setting-checkbox" checked>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Sleep Timer (minutes)</label>
-                        <select id="sleepTimer" class="setting-select">
-                            <option value="0">Off</option>
-                            <option value="15">15 min</option>
-                            <option value="30">30 min</option>
-                            <option value="60">1 hour</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>Equalizer Preset</label>
-                        <select id="eqPreset" class="setting-select">
-                            <option value="flat">Flat</option>
-                            <option value="rock">Rock</option>
-                            <option value="pop">Pop</option>
-                            <option value="jazz">Jazz</option>
-                            <option value="classical">Classical</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="settings-footer">
-                    <button class="ds-button setting-btn" id="resetSettings">Reset All</button>
-                    <button class="ds-button setting-btn" id="saveSettings">Save</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Easter Egg Counter -->
-        <div class="easter-egg-counter" id="easterEggCounter" style="display: none;"></div>
-
-        <script src="script.js"></script>
     </div>
+
+    <script>
+        function hideLoading() {
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.style.opacity = '0';
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        // Add some interactive sparkle effects
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.98) {
+                createSparkle(e.clientX, e.clientY);
+            }
+        });
+
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.style.cssText = `
+                position: fixed;
+                left: ${x}px;
+                top: ${y}px;
+                width: 4px;
+                height: 4px;
+                background: white;
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 1000;
+                animation: sparkle 1s ease-out forwards;
+            `;
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => sparkle.remove(), 1000);
+        }
+
+        // Add sparkle animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle {
+                0% {
+                    opacity: 1;
+                    transform: scale(0) rotate(0deg);
+                }
+                50% {
+                    opacity: 1;
+                    transform: scale(1) rotate(180deg);
+                }
+                100% {
+                    opacity: 0;
+                    transform: scale(0) rotate(360deg);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
