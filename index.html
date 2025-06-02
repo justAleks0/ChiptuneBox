@@ -1,0 +1,189 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChiptuneBox v1.0.0 - Retro Pixel MP3 Player</title>
+    <meta name="description" content="A retro pixel-art MP3 player built for mobile. DS-inspired dual-screen layout with touch controls and nostalgic aesthetics.">
+    <meta name="author" content="justAleks">
+    <meta name="version" content="1.0.0">
+    <meta name="theme-color" content="#00ff88">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="ds-container">
+        <!-- Top Screen -->
+        <div class="ds-screen ds-top-screen">
+            <div class="screen-bezel">
+                <div class="screen-content top-content">
+                    <div class="status-bar">
+                        <span class="time">12:34</span>
+                        <span class="battery">🔋</span>
+                    </div>
+                    <div class="visualizer-area">
+                        <div class="album-art">
+                            <div class="pixel-mascot" id="mascot"></div>
+                        </div>
+                        <div class="visualizer" id="visualizer">
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                        </div>
+                    </div>
+                    <div class="track-info">
+                        <div class="track-title" id="trackTitle">No Track Selected</div>
+                        <div class="track-artist" id="trackArtist">Unknown Artist</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DS Hinge -->
+        <div class="ds-hinge"></div>
+
+        <!-- Bottom Screen -->
+        <div class="ds-screen ds-bottom-screen">
+            <div class="screen-bezel">
+                <div class="screen-content bottom-content">
+                    <div class="progress-section">
+                        <div class="time-display">
+                            <span id="currentTime">0:00</span>
+                            <span id="totalTime">0:00</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progressBar">
+                                <div class="progress-fill" id="progressFill"></div>
+                                <div class="progress-handle" id="progressHandle"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="controls-section">
+                        <button class="ds-button control-btn" id="shuffleBtn">🔀</button>
+                        <button class="ds-button control-btn" id="prevBtn">⏮️</button>
+                        <button class="ds-button control-btn play-pause" id="playBtn">▶️</button>
+                        <button class="ds-button control-btn" id="nextBtn">⏭️</button>
+                        <button class="ds-button control-btn" id="loopBtn">🔄</button>
+                    </div>
+
+                    <div class="volume-section">
+                        <span class="volume-label">VOL</span>
+                        <div class="volume-bar" id="volumeBar">
+                            <div class="volume-fill" id="volumeFill"></div>
+                            <div class="volume-handle" id="volumeHandle"></div>
+                        </div>
+                    </div>
+
+                    <div class="menu-buttons">
+                        <button class="ds-button menu-btn" id="libraryBtn">📁 LIBRARY</button>
+                        <button class="ds-button menu-btn" id="playlistBtn">📋 PLAYLIST</button>
+                        <button class="ds-button menu-btn" id="settingsBtn">⚙️ SETTINGS</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Input (Hidden) -->
+        <input type="file" id="fileInput" multiple accept="audio/*" style="display: none;">
+        <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
+
+        <!-- Audio Element -->
+        <audio id="audioPlayer" preload="none"></audio>
+
+        <!-- Playlist Modal -->
+        <div class="playlist-modal" id="playlistModal">
+            <div class="playlist-content">
+                <div class="playlist-header">
+                    <h3>📋 PLAYLIST</h3>
+                    <button class="close-btn" id="closePlaylist">✕</button>
+                </div>
+                <div class="playlist-body" id="playlistBody">
+                    <div class="empty-playlist">
+                        <p>No tracks loaded</p>
+                        <p>Click LIBRARY to add music</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="settings-modal" id="settingsModal">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h3>⚙️ SETTINGS</h3>
+                    <button class="close-btn" id="closeSettings">✕</button>
+                </div>
+                
+                <div class="settings-body">
+                    <div class="setting-group">
+                        <label>Theme</label>
+                        <select id="themeSelect" class="setting-select">
+                            <option value="default">Classic DS</option>
+                            <option value="lite">DS Lite</option>
+                            <option value="dark">Dark Mode</option>
+                            <option value="retro">Retro Green</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Audio Quality</label>
+                        <select id="audioQuality" class="setting-select">
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low (Battery Save)</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Auto-Play Next</label>
+                        <input type="checkbox" id="autoPlayNext" class="setting-checkbox" checked>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Button Sounds</label>
+                        <input type="checkbox" id="buttonSounds" class="setting-checkbox" checked>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Show Visualizer</label>
+                        <input type="checkbox" id="showVisualizer" class="setting-checkbox" checked>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Sleep Timer (minutes)</label>
+                        <select id="sleepTimer" class="setting-select">
+                            <option value="0">Off</option>
+                            <option value="15">15 min</option>
+                            <option value="30">30 min</option>
+                            <option value="60">1 hour</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Equalizer Preset</label>
+                        <select id="eqPreset" class="setting-select">
+                            <option value="flat">Flat</option>
+                            <option value="rock">Rock</option>
+                            <option value="pop">Pop</option>
+                            <option value="jazz">Jazz</option>
+                            <option value="classical">Classical</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-footer">
+                    <button class="ds-button setting-btn" id="resetSettings">Reset All</button>
+                    <button class="ds-button setting-btn" id="saveSettings">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Easter Egg Counter -->
+        <div class="easter-egg-counter" id="easterEggCounter" style="display: none;"></div>
+
+        <script src="script.js"></script>
+    </div>
+</body>
+</html>
